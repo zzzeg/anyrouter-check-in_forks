@@ -59,6 +59,10 @@
    - Value: 你的多账号配置数据
 
 ### 4. 多账号配置格式
+单账号 (json尽量不留空格一行显示，并且用AI删除一下隐藏字符，不然实际使用中容易报错，也不知道哪个环节出的隐藏字符)
+```json
+[{"cookies":{"session":"abc123session"},"api_user":"user123"}]
+```
 
 支持单个与多个账号配置，可选 `name` 和 `provider` 字段：
 
@@ -138,7 +142,7 @@
 ## 配置示例
 
 ### 基础配置（向后兼容）
-单账号 
+单账号 签到，不指定 provider 时默认使用 anyrouter
 (json尽量不留空格一行显示，并且用AI删除一下隐藏字符，不然实际使用中容易报错，也不知道哪个环节出的隐藏字符)
 ```json
 [{"cookies":{"session":"abc123session"},"api_user":"user123"}]
