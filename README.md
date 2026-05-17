@@ -138,30 +138,21 @@
 ## 配置示例
 
 ### 基础配置（向后兼容）
-
-假设你有两个账号需要签到，不指定 provider 时默认使用 anyrouter：
-
+单账号 (json尽量不留空格一行显示，并且用AI删除一下隐藏字符，不然实际使用中容易报错，也不知道哪个环节出的隐藏字符)
+```json
+[{"cookies":{"session":"abc123session"},"api_user":"user123"}]
+```
+假设你有多个账号需要签到，不指定 provider 时默认使用 anyrouter：
 ```json
 [
-  {
-    "cookies": {
-      "session": "abc123session"
-    },
-    "api_user": "user123"
-  },
-  {
-    "cookies": {
-      "session": "xyz789session"
-    },
-    "api_user": "user456"
-  }
+  {"cookies":{"session":"abc123session"},"api_user":"user123"},
+  {"cookies":{"session":"abc123session"},"api_user":"user123"}
 ]
 ```
-
 ### 多服务商配置
 
 如果你需要同时使用多个服务商（如 anyrouter 和 agentrouter）：
-
+(json尽量不留空格一行显示，并且用AI删除一下隐藏字符，不然实际使用中容易报错，也不知道哪个环节出的隐藏字符)
 ```json
 [
   {
@@ -202,7 +193,6 @@
 ### 完整配置（自定义路径）
 
 如果服务商使用了不同的 API 路径、请求头或需要 WAF 绕过，可以额外指定：
-
 ```json
 {
   "customrouter": {
