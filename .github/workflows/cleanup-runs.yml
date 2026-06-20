@@ -1,0 +1,49 @@
+name: "Cleanup workflow runs"
+run-name: "Cleanup workflow runs #${{ github.run_number }}"
+
+on:
+  schedule:
+    - cron: "30 2 * * *"
+  workflow_dispatch:
+    inputs:
+      keep_count:
+        description: "每个 workflow 保留最近多少条 runs"
+        required: false
+        default: "30"
+        type: string
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Cleanup old workflow runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEEP_COUNT: ${{ github.event.inputs.keep_count || '30' }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          echo "Keep latest ${KEEP_COUNT} runs for each workflow."
+
+          gh api "repos/${REPOSITORY}/actions/workflows" --paginate \
+            --jq '.workflows[] | select(.state == "active") | [.id, .name] | @tsv' |
+          while IFS=$'\t' read -r workflow_id workflow_name; do
+            echo "Cleanup workflow: ${workflow_name} (${workflow_id})"
+
+            gh api "repos/${REPOSITORY}/actions/workflows/${workflow_id}/runs?per_page=100" --paginate \
+              --jq ".workflow_runs | sort_by(.created_at) | reverse | .[${KEEP_COUNT}:] | .[] | .id" |
+            while read -r run_id; do
+              if [ -z "${run_id}" ]; then
+                continue
+              fi
+
+              echo "Delete run: ${run_id}"
+              gh api --method DELETE "repos/${REPOSITORY}/actions/runs/${run_id}"
+            done
+          done
